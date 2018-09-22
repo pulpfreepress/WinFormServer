@@ -217,8 +217,9 @@ namespace WinFormServer
                 //_statusTextBox.InvokeEx(stb => stb.Text =ex.ToString());
             }
 
-
-
+            _client_list.Remove(client);
+            _client_count -= 1;
+            _connectedClientsTextBox.InvokeEx(cctb => cctb.Text = _client_count.ToString());
             _statusTextBox.InvokeEx(stb => stb.Text += CRLF + "Finished processing client requests for client: " + client.GetHashCode());
 
         }
