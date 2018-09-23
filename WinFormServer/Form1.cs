@@ -17,15 +17,20 @@ namespace WinFormServer
     public partial class Form1 : Form
     {
 
-       
+        // Constants
         private const string CRLF = "\r\n";
 
+        // Fields
         private List<TcpClient> _client_list;
         private TcpListener _listener;
         private int _client_count;
         private bool _keep_going;
         private int _port = 5000;
 
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public Form1()
         {
             InitializeComponent();
@@ -35,6 +40,7 @@ namespace WinFormServer
             _startServerButton.Enabled = true;
             _stopServerButton.Enabled = false;
             _sendCommandButton.Enabled = false;
+            _statusTextBox.Text = string.Empty;
         }
 
 
@@ -45,7 +51,10 @@ namespace WinFormServer
         {
             try
             {
-                
+                _connectedClientsTextBox.Text = "0";
+                _client_count = 0;
+                _client_list.Clear();
+
                 if(!Int32.TryParse(_portTextBox.Text, out _port))
                 {
                     _port = 5000;
@@ -59,9 +68,10 @@ namespace WinFormServer
                 _startServerButton.Enabled = false;
                 _stopServerButton.Enabled = true;
                 _sendCommandButton.Enabled = true;
-            }catch(Exception)
+            }catch(Exception ex)
             {
-
+                _statusTextBox.Text += CRLF + "Problem starting server.";
+                _statusTextBox.Text += CRLF + ex.ToString();
             }
 
            
@@ -84,9 +94,6 @@ namespace WinFormServer
                 foreach(TcpClient client in _client_list)
                 {
                     client.Close();
-                    _client_count -= 1;
-                    _connectedClientsTextBox.InvokeEx(cctb => cctb.Text = _client_count.ToString());
-                   
                    
                 }
                 _client_list.Clear();
@@ -95,14 +102,14 @@ namespace WinFormServer
             }catch (Exception)
             {
                 // Swallow the exception
-                //_statusTextBox.InvokeEx(stb => stb.Text += CRLF + "Problem stopping the server.");
+                //_statusTextBox.InvokeEx(stb => stb.Text += CRLF + "Problem stopping the server, or client connections forcibly closed...");
                 //_statusTextBox.InvokeEx(stb => stb.Text += CRLF + ex.ToString());
             }
 
             _startServerButton.Enabled = true;
             _stopServerButton.Enabled = false;
             _sendCommandButton.Enabled = false;
-           
+            _statusTextBox.Text = string.Empty;
 
         }
 
@@ -166,7 +173,7 @@ namespace WinFormServer
             _statusTextBox.InvokeEx(stb => stb.Text += CRLF + "Exiting listener thread...");
             _statusTextBox.InvokeEx(stb => stb.Text = String.Empty);
 
-        }
+        } // end ListenForIncomingConnections() method
 
 
 
@@ -174,7 +181,6 @@ namespace WinFormServer
         {
             TcpClient client = (TcpClient)o;
             _client_list.Add(client);
-
             _client_count += 1;
             _connectedClientsTextBox.InvokeEx(cctb => cctb.Text = _client_count.ToString());
 
@@ -222,9 +228,12 @@ namespace WinFormServer
             _connectedClientsTextBox.InvokeEx(cctb => cctb.Text = _client_count.ToString());
             _statusTextBox.InvokeEx(stb => stb.Text += CRLF + "Finished processing client requests for client: " + client.GetHashCode());
 
-        }
+            if (_client_count == 0)
+            {
+                _statusTextBox.InvokeEx(stb => stb.Text = string.Empty);
+            }
+        } // end ProcessClientRequests() method
 
 
-
-    }
-}
+    } // end class
+} // end namespace
