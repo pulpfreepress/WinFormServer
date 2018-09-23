@@ -99,10 +99,10 @@ namespace WinFormServer
                 _client_list.Clear();
                 _listener.Stop();
 
-            }catch (Exception)
+            }catch (Exception ex)
             {
-                // Swallow the exception
-                //_statusTextBox.InvokeEx(stb => stb.Text += CRLF + "Problem stopping the server, or client connections forcibly closed...");
+                
+                _statusTextBox.InvokeEx(stb => stb.Text += CRLF + "Problem stopping the server, or client connections forcibly closed...");
                 //_statusTextBox.InvokeEx(stb => stb.Text += CRLF + ex.ToString());
             }
 
@@ -160,9 +160,9 @@ namespace WinFormServer
             }
             catch (SocketException se)
             {
-               // swallow this one exception
-               // _statusTextBox.InvokeEx(stb => stb.Text += CRLF + "Problem starting the server.");
-               // _statusTextBox.InvokeEx(stb => stb.Text += CRLF + se.ToString());
+               
+                _statusTextBox.InvokeEx(stb => stb.Text += CRLF + "Problem starting the server.");
+                _statusTextBox.InvokeEx(stb => stb.Text += CRLF + se.ToString());
             }
             catch(Exception ex)
             {
