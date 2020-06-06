@@ -124,10 +124,12 @@ namespace WinFormServer
                     StreamWriter writer = new StreamWriter(client.GetStream());
                     writer.WriteLine(_clientCommandTextBox.Text);
                     writer.Flush();
-                    _clientCommandTextBox.Text = string.Empty; 
+                    
                 }
+                _clientCommandTextBox.Text = string.Empty;
 
-            }catch(Exception ex)
+            }
+            catch(Exception ex)
             {
                 _statusTextBox.Text += CRLF + "Problem sending command to clients";
                 _statusTextBox.Text += CRLF + ex.ToString();
